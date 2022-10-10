@@ -1,5 +1,8 @@
 
+import 'package:bloc_network/bloc/user_bloc.dart';
+import 'package:bloc_network/bloc/user_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 
 class UserList extends StatelessWidget {
@@ -7,22 +10,42 @@ class UserList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: 20,
+    return BlocBuilder<UserBloc, UserState>(
+      builder: ((context, state) {
+        if(state is UserEmptyState){
+          return const Text('No data recieved. Please press Load button', 
+          textAlign: TextAlign.center,
+          style: TextStyle( fontSize: 20),);
+        }
+
+        if(state is UserLoadingState){
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if(state is UserError){
+          return const Text('Ops, Error fetching the data!');
+        }
+
+        if(state is UserLoadedState){
+          return ListView.builder(
+      itemCount: 10,
       itemBuilder: ((cxt, i) =>  Container(
         color: i % 2 ==0? Colors.teal[200]: Colors.white,
         child:  ListTile(
-          leading: const Text("ID: 1", style: TextStyle(fontWeight: FontWeight.bold),),
+          leading: Text("ID: ${state.loadedUser[i].id}", style: const TextStyle(fontWeight: FontWeight.bold),),
           title: Column(children: [
-            const Text("Name", style: TextStyle(fontWeight: FontWeight.bold),),
+            Text(state.loadedUser[i].name, style: const TextStyle(fontWeight: FontWeight.bold),),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-              Text("Email: test@test.com", style: TextStyle(fontStyle: FontStyle.italic),),
-              Text("Phone: 123456789", style: TextStyle(fontStyle: FontStyle.italic),),
+              children:  [
+              Text("Email: ${state.loadedUser[i].email}", style: const TextStyle(fontStyle: FontStyle.italic),),
+              Text("Phone: ${state.loadedUser[i].phone}", style: const TextStyle(fontStyle: FontStyle.italic),),
             ],),
           ]),
         ),
       ) ),);
+        }
+      return const SizedBox.shrink();
+      }));
   }
 }

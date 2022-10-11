@@ -13,9 +13,11 @@ class UserList extends StatelessWidget {
     return BlocBuilder<UserBloc, UserState>(
       builder: ((context, state) {
         if(state is UserEmptyState){
-          return const Text('No data recieved. Please press Load button', 
-          textAlign: TextAlign.center,
-          style: TextStyle( fontSize: 20),);
+          return const Center(
+            child:  Text('No data recieved. Please press Load button', 
+            textAlign: TextAlign.center,
+            style: TextStyle( fontSize: 20),),
+          );
         }
 
         if(state is UserLoadingState){
@@ -23,15 +25,17 @@ class UserList extends StatelessWidget {
         }
 
         if(state is UserError){
-          return const Text('Ops, Error fetching the data!');
+          return const Center(child: Text('Ops, Error fetching the data!'));
         }
 
         if(state is UserLoadedState){
           return ListView.builder(
       itemCount: 10,
-      itemBuilder: ((cxt, i) =>  Container(
-        color: i % 2 ==0? Colors.teal[200]: Colors.white,
-        child:  ListTile(
+      itemBuilder: ((cxt, i) =>  Card(
+        color:  i % 2 ==0? Colors.teal[200]: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        elevation: 5,
+        child: ListTile(
           leading: Text("ID: ${state.loadedUser[i].id}", style: const TextStyle(fontWeight: FontWeight.bold),),
           title: Column(children: [
             Text(state.loadedUser[i].name, style: const TextStyle(fontWeight: FontWeight.bold),),
